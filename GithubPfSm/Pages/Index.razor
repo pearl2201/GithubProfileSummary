@@ -4,9 +4,9 @@
 
 
 
-<Title Level="1">
+<AntDesign.Title Level="1">
     Enter Github Username
-</Title>
+</AntDesign.Title>
 <Select ShowSearch
         Style="width:200px"
         Placeholder="input search text"
@@ -17,9 +17,18 @@
         OnChange="@OnChange">
     @foreach (var value in _items)
     {
-        <SelectOption Value="@value">@value</SelectOption>
+        <SelectOption Value="@value.Login">
+            <AntDesign.Space>
+                <AntDesign.SpaceItem>
+                    <AntDesign.Avatar Src="@value.AvatarUrl" Size="small"/>
+                </AntDesign.SpaceItem>
+                <AntDesign.SpaceItem>
+                    @value.Login
+                </AntDesign.SpaceItem>
+            </AntDesign.Space>
+        </SelectOption>
     }
 </Select>
 
-<Line Data="data" Config="config" />
+
 
