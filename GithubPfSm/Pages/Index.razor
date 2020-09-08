@@ -1,0 +1,25 @@
+﻿@page "/"
+
+
+
+
+
+<Title Level="1">
+    Enter Github Username
+</Title>
+<Select ShowSearch
+        Style="width:200px"
+        Placeholder="input search text"
+        ShowArrow="false"
+        FilterOption="false"
+        DefaultActiveFirstOption="false"
+        OnSearch="@OnSearch"
+        OnChange="@OnChange">
+    @foreach (var value in _items)
+    {
+        <SelectOption Value="@value">@value</SelectOption>
+    }
+</Select>
+
+<Line Data="data" Config="config" />
+
