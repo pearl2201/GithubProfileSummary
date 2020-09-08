@@ -65,5 +65,22 @@ namespace GithubPfSm.Entities
         public string Type { get; set; }
 
         public float Score { get; set; }
+
+        public string Name {get;set;}
+
+        public string Email {get;set;}
+
+               public string Company {get;set;}
+
+        [JsonProperty("public_repos")]
+        public int PublicRepos {get;set;}
+
+        [JsonProperty("created_at")]
+        public DateTime CreatedAt {get;set;}
+
+        [JsonProperty("updated_at")]
+        public DateTime UpdatedAt {get;set;}
+
+
     }
 }
