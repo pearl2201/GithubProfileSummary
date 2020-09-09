@@ -14,11 +14,11 @@ namespace GithubPfSm.Models.Responses
         [JsonProperty("incomplete_results")]
         public bool IncompleteResults { get; set; }
         [JsonProperty("items")]
-        public List<User> Items { get; set; }
+        public List<IndexSearchUser> Items { get; set; }
 
         public SearchUserResponse()
         {
-            Items = new List<User>();
+            Items = new List<IndexSearchUser>();
         }
     }
 }

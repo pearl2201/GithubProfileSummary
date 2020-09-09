@@ -12,11 +12,16 @@
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="3.2.1" PrivateAssets="all" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     <PackageReference Include="System.Net.Http.Json" Version="3.2.0" />
-     <PackageReference Include="Octokit" Version="0.48.0" />
+    <PackageReference Include="AntDesign.Charts" Version="0.1.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\AntDesign.Charts\AntDesign.Charts.csproj" />
+    <Content Update="wwwroot\appsettings.development.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>

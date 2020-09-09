@@ -1,5 +1,7 @@
-namespace GithubPfSm.Entities {
-    public class RepositoryCommit {
+namespace GithubPfSm.Entities
+{
+    public class RepositoryCommit
+    {
 
     }
 }

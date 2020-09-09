@@ -12,6 +12,8 @@ using Microsoft.AspNetCore.Components;
 using GithubPfSm.Entities;
 using GithubPfSm.Models.Responses;
 using Newtonsoft.Json;
+using GithubPfSm.Services;
+using Microsoft.Extensions.Configuration;
 
 namespace GithubPfSm.Pages
 {
@@ -21,8 +23,13 @@ namespace GithubPfSm.Pages
         private HttpClient Http { get; set; }
 
         [Inject]
+        private GithubService GithubService { get; set; }
+
+        [Inject]
         private NavigationManager NavigationManager { get; set; }
 
+        [Inject]
+        private IConfiguration Configuration { get; set; }
 
         public Index()
         {
@@ -31,8 +38,8 @@ namespace GithubPfSm.Pages
 
      
 
-        private Task<string> _oldTask;
-        private List<GithubPfSm.Entities.User> _items = new List<GithubPfSm.Entities.User>();
+        private Task<SearchUserResponse> _oldTask;
+        private List<IndexSearchUser> _items = new List<IndexSearchUser>();
 
         private async void OnSearch(string value)
         {
@@ -40,19 +47,13 @@ namespace GithubPfSm.Pages
             {
                 if (_oldTask == null || _oldTask.IsCompleted)
                 {
-                    var key = HttpUtility.UrlEncode(value);
-                    var url = $"https://api.github.com/search/users?q={key}";
-
-                    _oldTask = Http.GetStringAsync(url);
-                    var content = await _oldTask;
-
-                    var result = JsonConvert.DeserializeObject<SearchUserResponse>(content);
+                    _oldTask = GithubService.SearchUserAsync(value);
+                    var result = await _oldTask; 
                     _items.Clear();
                     foreach (var item in result.Items)
                     {
                         _items.Add(item);
                     }
-                    Console.WriteLine("ItemCount: " + _items.Count);
                     StateHasChanged();
                 }
             }

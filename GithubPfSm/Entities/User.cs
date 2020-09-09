@@ -30,7 +30,7 @@ namespace GithubPfSm.Entities
 
     }
 
-    public class User
+    public class IndexUser
     {
         public string Login { get; set; }
 
@@ -64,22 +64,32 @@ namespace GithubPfSm.Entities
         [JsonProperty("type")]
         public string Type { get; set; }
 
+      
+
+    }
+
+    public class IndexSearchUser: IndexUser
+    {
         public float Score { get; set; }
+    }
 
-        public string Name {get;set;}
+    public class User : IndexUser
+    {
+       
+        public string Name { get; set; }
 
-        public string Email {get;set;}
+        public string Email { get; set; }
 
-               public string Company {get;set;}
+        public string Company { get; set; }
 
         [JsonProperty("public_repos")]
-        public int PublicRepos {get;set;}
+        public int PublicRepos { get; set; }
 
         [JsonProperty("created_at")]
-        public DateTime CreatedAt {get;set;}
+        public DateTime CreatedAt { get; set; }
 
         [JsonProperty("updated_at")]
-        public DateTime UpdatedAt {get;set;}
+        public DateTime UpdatedAt { get; set; }
 
 
     }
