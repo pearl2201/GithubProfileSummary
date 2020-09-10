@@ -46,7 +46,7 @@ namespace GithubPfSm.Entities
         /// <summary>
         /// GraphQL Node Id
         /// </summary>
-        public string NodeId { get; protected set; }
+        public string NodeId { get;  set; }
 
         /// <summary>
         /// Gets the name of the author or committer.
@@ -54,7 +54,7 @@ namespace GithubPfSm.Entities
         /// <value>
         /// The name.
         /// </value>
-        public string Name { get; protected set; }
+        public string Name { get;  set; }
 
         /// <summary>
         /// Gets the email of the author or committer.
@@ -62,7 +62,7 @@ namespace GithubPfSm.Entities
         /// <value>
         /// The email.
         /// </value>
-        public string Email { get; protected set; }
+        public string Email { get;  set; }
 
         /// <summary>
         /// Gets the date of the author or contributor's contributions.
@@ -70,7 +70,7 @@ namespace GithubPfSm.Entities
         /// <value>
         /// The date.
         /// </value>
-        public DateTimeOffset Date { get; protected set; }
+        public DateTimeOffset Date { get;  set; }
 
         internal string DebuggerDisplay
         {

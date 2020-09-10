@@ -2,27 +2,24 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace GithubPfSm.Entities
 {
-    public class Commit
+    public class Commit : GitReference
     {
         public Commit() { }
 
 
+        [JsonProperty("commit")]
+        public CommitContent Content { get; set; }
 
-        public string Message { get; protected set; }
 
-        public Committer Author { get; protected set; }
 
-        public Committer Committer { get; protected set; }
 
-        public GitReference Tree { get; protected set; }
+        public IndexUser Author { get; set; }
 
-        public IReadOnlyList<GitReference> Parents { get; protected set; }
-
-        public int CommentCount { get; protected set; }
-
-        public Verification Verification { get; protected set; }
+        public IndexUser Committer { get; set; }
+        public List<GitReference> Parents { get; set; }
     }
 }

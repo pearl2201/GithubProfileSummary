@@ -8,77 +8,120 @@ using GithubPfSm.Entities;
 using Microsoft.AspNetCore.Components;
 using Newtonsoft.Json;
 
-namespace GithubPfSm.Services {
-    public class UserService {
+namespace GithubPfSm.Services
+{
+    public class UserService
+    {
 
 
         [Inject]
-        private GithubService GithubService { get; set; }
+        private GithubService githubService { get; set; }
 
-        public UserService () {
-
+        public UserService(GithubService githubService)
+        {
+            this.githubService = githubService;
         }
 
-        public bool UserExists (string name) {
+        public bool UserExists(string name)
+        {
             return false;
         }
 
-        public bool CanLoadUser (string name) {
+        public bool CanLoadUser(string name)
+        {
             return false;
         }
 
-        public async Task<UserProfile> GetUserProfile (string username) {
-           
+        public async Task<UserProfile> GetUserProfile(string username)
+        {
+
             UserProfile profile = new UserProfile();
-            
-            var user = await GithubService.GetUserAsync(username);
-            
-            var repos = (await GithubService.GetUserRepos(username)).Where(x => !x.Fork && x.Size != 0);
-            
-            var repoCommits = (await Task.WhenAll(repos.Select(x => GithubService.GetUserReposCommits(username, x.Name)))).Where(x => x.Author.Name.Equals(username, System.StringComparison.OrdinalIgnoreCase));
+            Console.WriteLine("Is GithubService Null: " + (githubService == null));
+            var user = await githubService.GetUserAsync(username);
 
+            var repos = (await githubService.GetUserRepos(username)).Where(x => !x.Fork && x.Size != 0);
+            Console.WriteLine("repos Count: " + repos.Count());
+            //  val repoCommits = repos.parallelStream().map { it to commitsForRepo(it).filter { it.author?.login.equals(username, ignoreCase = true) } }.toList().toMap()
+            var repoCommits = await Task.WhenAll(repos.Select(async x =>
+            {
+                var commits = (await githubService.GetUserReposCommits(username, x.Name)).Where(x => x.Author == null ? false : x.Author.Login.Equals(user.Login, System.StringComparison.OrdinalIgnoreCase)).ToList();
+                return new KeyValuePair<Repository, List<Commit>>(x, commits);
+            }));
+
+            // val langRepoGrouping = repos.groupingBy { (it.language ?: "Unknown") }
             var langRepoGrouping = repos.GroupBy(x => x.Language ?? "Unknown");
 
             var accountCreationDate = QuarterYear.GetQuarter(user.CreatedAt);
             var currentQuarterDate = QuarterYear.GetQuarter(DateTime.Now);
-            List<QuarterYear> quarterYears = new List<QuarterYear>() { };
+            var currentQuarterDateString = currentQuarterDate.ToString();
+            List<string> quarterYears = new List<string>() { };
             var tempQuaterYear = accountCreationDate;
-            while (tempQuaterYear != currentQuarterDate)
+            while (!quarterYears.Contains(currentQuarterDateString))
             {
-                quarterYears.Add(tempQuaterYear);
+                quarterYears.Add(tempQuaterYear.ToString());
                 tempQuaterYear = tempQuaterYear.Next();
             }
-            
-            if (currentQuarterDate != accountCreationDate)
+
+
+
+            // val quarterCommitCount = CommitCountUtil.getCommitsForQuarters(user, repoCommits)
+            var tempCommits = new List<Commit>();
+            foreach (var pair in repoCommits)
             {
-                quarterYears.Add(currentQuarterDate);
+
+                foreach (var commit in pair.Value)
+                {
+                    tempCommits.Add(commit);
+                }
+                Console.WriteLine("Pair count: " + pair.Value.Count() + " -- " + tempCommits.Count);
             }
-            var quarterCommitCount = repoCommits.GroupBy(x => QuarterYear.GetQuarter(x.Committer.Date.UtcDateTime).ToString()).ToDictionary(x => x.Key, x => x.Count());
+            var tempQuarterCommitCount = tempCommits.GroupBy(x => QuarterYear.GetQuarter(x.Content.Committer.Date.UtcDateTime).ToString()).ToDictionary(x => x.Key, x => x.Count());
+            var quarterCommitCount = quarterYears.ToDictionary(x => x, x => tempQuarterCommitCount.ContainsKey(x)? tempQuarterCommitCount[x]:0);
+            // val langRepoCount = langRepoGrouping.eachCount().toList().sortedBy { (_, v) -> -v }.toMap()
+            var langRepoCount = langRepoGrouping.ToDictionary(x => x.Key, x => x.Count()).OrderBy(x => x.Value).ToDictionary(x => x.Key, x => x.Value);
 
-            var langRepoCount = langRepoGrouping.ToDictionary(x => x.Key, x => x.Count());
+            // val langStarCount = langRepoGrouping.fold(0) { acc, repo -> acc + repo.watchers }.toList().sortedBy { (_, v) -> -v }.toMap()
+            var langStarCount = langRepoGrouping.ToDictionary(x => x.Key, x => x.Select(x => x.StargazersCount).Sum()).OrderBy(x => x.Value).ToDictionary(x => x.Key, x => x.Value);
 
-            var langStarCount = langRepoGrouping.ToDictionary(x => x.Key, x => x.Select(x => x.StargazersCount).Sum());
+            // val langCommitCount = langRepoGrouping.fold(0) { acc, repo -> acc + repoCommits[repo]!!.size }.toList().sortedBy { (_, v) -> -v }.toMap()
+            var langCommitCount = langRepoGrouping.ToDictionary(x => x.Key, x => (int)x.Select(x => x.Size).Sum()).OrderBy(x => x.Value).ToDictionary(x => x.Key, x => x.Value);
 
-            var langCommitCount = langRepoGrouping.ToDictionary(x => x.Key, x => x.Select(x => x.Size).Sum());
+            // val repoCommitCount = repoCommits.map { it.key.name to it.value.size }.toList().sortedBy { (_, v) -> -v }.take(10).toMap()
+            var repoCommitCount = repoCommits.Select(x => new KeyValuePair<string, int>(x.Key.Name, x.Value.Count())).OrderBy(x => x.Value).Take(10).ToDictionary(x => x.Key, x => x.Value);
 
-            var repoCommitCount = 0;
+            // val repoStarCount = repos.filter { it.watchers > 0 }.map { it.name to it.watchers }.sortedBy { (_, v) -> -v }.take(10).toMap()
+            var repoStarCount = repos.Where(x => x.WatchersCount > 0).OrderBy(x => x.WatchersCount).Take(10).ToDictionary(x => x.Name, x => x.WatchersCount);
 
-            var repoStarCount = 0;
+            // val repoCommitCountDescriptions = repoCommitCount.map { it.key to repos.find { r -> r.name == it.key }?.description }.toMap()
+            var repoCommitCountDescriptions = repoCommitCount.ToDictionary(x => x.Key, x => repos.FirstOrDefault(y => y.Name == x.Key)?.Description);
 
-            var repoCommitCountDescriptions = 0;
+            // val repoStarCountDescriptions = repoStarCount.map { it.key to repos.find { r -> r.name == it.key }?.description }.toMap()
+            var repoStarCountDescriptions = repoStarCount.ToDictionary(x => x.Key, x => repos.FirstOrDefault(y => y.Name == x.Key)?.Description);
 
-            var repoStarCountDescriptions = 0;
-
-            return profile;
+            return new UserProfile()
+            {
+                User = user,
+                LangCommitCount = langCommitCount,
+                QuarterCommitCount = quarterCommitCount,
+                LangRepoCount = langRepoCount,
+                LangStarCount = langStarCount,
+                RepoCommitCount = repoCommitCount,
+                RepoStarCount = repoStarCount,
+                RepoCommitCountDescriptions = repoCommitCountDescriptions,
+                RepoStarCountDescriptions = repoStarCountDescriptions,
+                FetchedAt = DateTime.UtcNow
+            };
         }
 
 
-        
-        public bool HasStaredRepo (string username) {
+
+        public bool HasStaredRepo(string username)
+        {
             return false;
         }
 
-        public List<RepositoryCommit> CommitsForRepo (Repository repo) {
+        public List<RepositoryCommit> CommitsForRepo(Repository repo)
+        {
             return null;
         }
     }

@@ -5,14 +5,24 @@ using GithubPfSm.Entities;
 using GithubPfSm.Models.Responses;
 using Microsoft.AspNetCore.Components;
 using Newtonsoft.Json;
+using System;
+using System.Linq;
+using System.Threading;
+using System.Net.Http.Json;
 
 namespace GithubPfSm.Services
 {
     public class GithubService
     {
 
-        [Inject]
-        private HttpClient httpClient { get; set; }
+
+        private HttpClient httpClient;
+
+        public GithubService(HttpClient httpClient)
+        {
+            this.httpClient = httpClient;
+            httpClient.DefaultRequestHeaders.Add("Authorization", "token a0b8ba919f3b9b163dd1b0c63dc5b153e1d96611");
+        }
         public async Task<SearchUserResponse> SearchUserAsync(string key)
         {
             var url = $"https://api.github.com/search/users?q={key}";
@@ -37,24 +47,83 @@ namespace GithubPfSm.Services
 
         public async Task<List<Repository>> GetUserRepos(string username)
         {
-            var url = $"https://api.github.com/users/{username}/repos";
+            int currentPage = 1;
+            bool isLast = false;
+            var repos = new List<Repository>();
+            var url = $"https://api.github.com/users/{username}/repos?page={currentPage}&type=owner";
+            while (!isLast)
+            {
 
+                Console.WriteLine($"Url: {url}");
+                var request = new HttpRequestMessage()
+                {
+                    Method = new HttpMethod("Get"),
+                    RequestUri = new Uri(url)
+                };
 
-            var content = await httpClient.GetStringAsync(url);
+                var response = await httpClient.SendAsync(request);
+                var content = await response.Content.ReadAsStringAsync();
 
-            var result = JsonConvert.DeserializeObject<List<Repository>>(content);
-            return result;
+                var result = JsonConvert.DeserializeObject<List<Repository>>(content);
+
+                repos.AddRange(result);
+                PageLinks pageLinks = new PageLinks(response);
+                var nextUrl = pageLinks.getNext();
+                if (!string.IsNullOrEmpty(nextUrl))
+                {
+                    url = nextUrl;
+                    isLast = false;
+                }
+                else
+                {
+                    isLast = true;
+                }
+            }
+
+            return repos;
         }
 
-        public async Task<Commit> GetUserReposCommits(string username, string repo)
+        private readonly Mutex _mut = new Mutex();
+        public async Task<List<Commit>> GetUserReposCommits(string username, string repo)
         {
-            var url = $"https://api.github.com/repos/{username}/{repo}/commits";
+            _mut.WaitOne();
+            int currentPage = 1;
+            bool isLast = false;
+            var commits = new List<Commit>();
+
+            var url = $"https://api.github.com/repos/{username}/{repo}/commits?page={currentPage}";
+            while (!isLast)
+            {
+                Console.WriteLine($"Url: {url}");
+                var request = new HttpRequestMessage()
+                {
+                    Method = new HttpMethod("Get"),
+                    RequestUri = new Uri(url)
+                };
+
+                var response = await httpClient.SendAsync(request);
+                var content = await response.Content.ReadAsStringAsync();
+
+                var result = JsonConvert.DeserializeObject<List<Commit>>(content);
+
+                commits.AddRange(result);
+                PageLinks pageLinks = new PageLinks(response);
+                var nextUrl = pageLinks.getNext();
+                if (!string.IsNullOrEmpty(nextUrl))
+                {
+                    url = nextUrl;
+                    isLast = false;
+                }
+                else
+                {
+                    isLast = true;
+                }
+                await Task.Delay(TimeSpan.FromSeconds(1));
+            }
 
 
-            var content = await httpClient.GetStringAsync(url);
-
-            var result = JsonConvert.DeserializeObject<Commit>(content);
-            return result;
+            _mut.ReleaseMutex();
+            return commits;
         }
 
     }

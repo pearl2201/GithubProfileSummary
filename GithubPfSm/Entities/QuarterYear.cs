@@ -41,7 +41,7 @@ namespace GithubPfSm.Entities
 
         public static bool operator !=(QuarterYear a, QuarterYear b)
         {
-            return a.Quarter != b.Quarter && a.Year != b.Year;
+            return a.Quarter != b.Quarter || a.Year != b.Year;
         }
 
       

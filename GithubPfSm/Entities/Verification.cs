@@ -12,7 +12,7 @@ namespace GithubPfSm.Entities
     {
         public Verification() { }
 
-        public Verification(bool verified, VerificationReason reason, string signature, string payload)
+        public Verification(bool verified, string reason, string signature, string payload)
         {
             Verified = verified;
             Reason = reason;
@@ -28,8 +28,7 @@ namespace GithubPfSm.Entities
         /// <summary>
         /// The reason for verified value.
         /// </summary>
-        [JsonConverter(typeof(VerificationReason))]
-        public VerificationReason Reason { get; protected set; }
+        public string Reason { get; protected set; }
 
         /// <summary>
         /// The signature that was extracted from the commit.

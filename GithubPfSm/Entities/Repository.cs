@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace GithubPfSm.Entities
 {
@@ -58,89 +59,96 @@ namespace GithubPfSm.Entities
             WatchersCount = watchersCount;
         }
 
-        public string Url { get; protected set; }
+        public string Url { get;  set; }
+        [JsonProperty("html_url")]
+        public string HtmlUrl { get;  set; }
+        [JsonProperty("clone_url")]
+        public string CloneUrl { get;  set; }
 
-        public string HtmlUrl { get; protected set; }
+        [JsonProperty("git_url")]
+        public string GitUrl { get;  set; }
 
-        public string CloneUrl { get; protected set; }
+        [JsonProperty("ssh_url")]
+        public string SshUrl { get;  set; }
 
-        public string GitUrl { get; protected set; }
+        [JsonProperty("svn_url")]
+        public string SvnUrl { get;  set; }
 
-        public string SshUrl { get; protected set; }
+        [JsonProperty("mirror_url")]
+        public string MirrorUrl { get;  set; }
 
-        public string SvnUrl { get; protected set; }
-
-        public string MirrorUrl { get; protected set; }
-
-        public long Id { get; protected set; }
+        public long Id { get;  set; }
 
         /// <summary>
         /// GraphQL Node Id
         /// </summary>
-        public string NodeId { get; protected set; }
+        [JsonProperty("node_id")]
+        public string NodeId { get;  set; }
 
-        public User Owner { get; protected set; }
+        public User Owner { get;  set; }
 
-        public string Name { get; protected set; }
+        public string Name { get;  set; }
 
-        public string FullName { get; protected set; }
+        [JsonProperty("full_name")]
+        public string FullName { get;  set; }
 
-        public bool IsTemplate { get; protected set; }
+        public bool IsTemplate { get;  set; }
 
-        public string Description { get; protected set; }
+        public string Description { get;  set; }
 
-        public string Homepage { get; protected set; }
+        public string Homepage { get;  set; }
 
-        public string Language { get; protected set; }
+        public string Language { get;  set; }
 
-        public bool Private { get; protected set; }
+        public bool Private { get;  set; }
 
-        public bool Fork { get; protected set; }
+        public bool Fork { get;  set; }
+        [JsonProperty("forks_count")]
+        public int ForksCount { get;  set; }
+        [JsonProperty("stargazers_count")]
+        public int StargazersCount { get;  set; }
+        [JsonProperty("watchers_count")]
+        public int WatchersCount { get;  set; }
+        [JsonProperty("default_branch")]
+        public string DefaultBranch { get;  set; }
+        [JsonProperty("open_issues_count")]
+        public int OpenIssuesCount { get;  set; }
 
-        public int ForksCount { get; protected set; }
-
-        public int StargazersCount { get; protected set; }
-
-        public int WatchersCount { get; protected set; }
-
-        public string DefaultBranch { get; protected set; }
-
-        public int OpenIssuesCount { get; protected set; }
-
-        public DateTimeOffset? PushedAt { get; protected set; }
-
-        public DateTimeOffset CreatedAt { get; protected set; }
-
-        public DateTimeOffset UpdatedAt { get; protected set; }
+        [JsonProperty("pushed_at")]
+        public DateTimeOffset? PushedAt { get;  set; }
+        [JsonProperty("created_at")]
+        public DateTimeOffset CreatedAt { get;  set; }
+        [JsonProperty("updated_at")]
+        public DateTimeOffset UpdatedAt { get;  set; }
 
 
 
-        public Repository Parent { get; protected set; }
+        public Repository Parent { get;  set; }
 
-        public Repository Source { get; protected set; }
+        public Repository Source { get;  set; }
 
-        public LicenseMetadata License { get; protected set; }
+        public LicenseMetadata License { get;  set; }
+        [JsonProperty("has_issues")]
+        public bool HasIssues { get;  set; }
+        [JsonProperty("has_wiki")]
+        public bool HasWiki { get;  set; }
+        [JsonProperty("has_downloads")]
+        public bool HasDownloads { get;  set; }
 
-        public bool HasIssues { get; protected set; }
+        public bool? AllowRebaseMerge { get;  set; }
 
-        public bool HasWiki { get; protected set; }
+        public bool? AllowSquashMerge { get;  set; }
 
-        public bool HasDownloads { get; protected set; }
-
-        public bool? AllowRebaseMerge { get; protected set; }
-
-        public bool? AllowSquashMerge { get; protected set; }
-
-        public bool? AllowMergeCommit { get; protected set; }
-
-        public bool HasPages { get; protected set; }
+        public bool? AllowMergeCommit { get;  set; }
+        [JsonProperty("has_pages")]
+        public bool HasPages { get;  set; }
 
         [Obsolete("Update your code to use WatchersCount as this field will stop containing data in the future")]
-        public int SubscribersCount { get; protected set; }
+        public int SubscribersCount { get;  set; }
 
-        public long Size { get; protected set; }
+        public long Size { get;  set; }
 
-        public bool Archived { get; protected set; }
+        public bool Archived { get;  set; }
 
         internal string DebuggerDisplay
         {
