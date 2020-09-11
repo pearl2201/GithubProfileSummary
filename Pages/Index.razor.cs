@@ -36,7 +36,7 @@ namespace GithubPfSm.Pages
 
         }
 
-     
+
 
         private Task<SearchUserResponse> _oldTask;
         private List<IndexSearchUser> _items = new List<IndexSearchUser>();
@@ -48,7 +48,7 @@ namespace GithubPfSm.Pages
                 if (_oldTask == null || _oldTask.IsCompleted)
                 {
                     _oldTask = GithubService.SearchUserAsync(value);
-                    var result = await _oldTask; 
+                    var result = await _oldTask;
                     _items.Clear();
                     foreach (var item in result.Items)
                     {
@@ -71,8 +71,10 @@ namespace GithubPfSm.Pages
             public List<string[]> result { get; set; }
         }
 
-          public void GotoUser(string username)
+        public void GotoUser(string username)
         {
+            Console.WriteLine(NavigationManager.BaseUri);
+            Console.WriteLine(NavigationManager.ToBaseRelativePath($"/users/{username}"));
             NavigationManager.NavigateTo(NavigationManager.ToBaseRelativePath($"/users/{username}"));
         }
     }
