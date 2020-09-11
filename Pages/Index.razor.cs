@@ -70,5 +70,10 @@ namespace GithubPfSm.Pages
         {
             public List<string[]> result { get; set; }
         }
+
+          public void GotoUser(string username)
+        {
+            NavigationManager.NavigateTo(NavigationManager.ToBaseRelativePath($"/users/{username}"));
+        }
     }
 }
