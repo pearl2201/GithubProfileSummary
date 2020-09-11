@@ -13,3 +13,8 @@
         httpClient.DefaultRequestHeaders.Add("Authorization", $"token {token}");
     }
 ```
+## Remote limit 1 fetch request per second.
+- Remove line from "Services/GithubService.cs"
+```csharp
+    await Task.Delay(TimeSpan.FromSeconds(1));
+```
