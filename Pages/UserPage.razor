@@ -65,8 +65,13 @@
 }
 else
 {
-    <AntDesign.Title>Data is fetching</AntDesign.Title>
-    <Skeleton />
+    <Spin Tip="Loading...">
+    <Alert
+        Message="Data is fetching"
+        Description="It should take some minutes"
+        Type="info"
+    />
+    </Spin>
 }
 
 

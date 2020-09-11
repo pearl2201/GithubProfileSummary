@@ -58,29 +58,36 @@ namespace GithubPfSm.Services
             var url = $"https://api.github.com/users/{username}/repos?page={currentPage}&type=owner";
             while (!isLast)
             {
-
-                
-                var request = new HttpRequestMessage()
+                try
                 {
-                    Method = new HttpMethod("Get"),
-                    RequestUri = new Uri(url)
-                };
 
-                var response = await httpClient.SendAsync(request);
-                var content = await response.Content.ReadAsStringAsync();
+                    var request = new HttpRequestMessage()
+                    {
+                        Method = new HttpMethod("Get"),
+                        RequestUri = new Uri(url)
+                    };
 
-                var result = JsonConvert.DeserializeObject<List<Repository>>(content);
+                    var response = await httpClient.SendAsync(request);
+                    var content = await response.Content.ReadAsStringAsync();
 
-                repos.AddRange(result);
-                PageLinks pageLinks = new PageLinks(response);
-                var nextUrl = pageLinks.getNext();
-                if (!string.IsNullOrEmpty(nextUrl))
-                {
-                    url = nextUrl;
-                    isLast = false;
+                    var result = JsonConvert.DeserializeObject<List<Repository>>(content);
+
+                    repos.AddRange(result);
+                    PageLinks pageLinks = new PageLinks(response);
+                    var nextUrl = pageLinks.getNext();
+                    if (!string.IsNullOrEmpty(nextUrl))
+                    {
+                        url = nextUrl;
+                        isLast = false;
+                    }
+                    else
+                    {
+                        isLast = true;
+                    }
                 }
-                else
+                catch (Exception e)
                 {
+                    Console.WriteLine($"Exception {e} on parse {url}");
                     isLast = true;
                 }
             }
@@ -99,31 +106,39 @@ namespace GithubPfSm.Services
             var url = $"https://api.github.com/repos/{username}/{repo}/commits?page={currentPage}";
             while (!isLast)
             {
-                
-                var request = new HttpRequestMessage()
+                try
                 {
-                    Method = new HttpMethod("Get"),
-                    RequestUri = new Uri(url)
-                };
+                    var request = new HttpRequestMessage()
+                    {
+                        Method = new HttpMethod("Get"),
+                        RequestUri = new Uri(url)
+                    };
 
-                var response = await httpClient.SendAsync(request);
-                var content = await response.Content.ReadAsStringAsync();
+                    var response = await httpClient.SendAsync(request);
+                    var content = await response.Content.ReadAsStringAsync();
 
-                var result = JsonConvert.DeserializeObject<List<Commit>>(content);
+                    var result = JsonConvert.DeserializeObject<List<Commit>>(content);
 
-                commits.AddRange(result);
-                PageLinks pageLinks = new PageLinks(response);
-                var nextUrl = pageLinks.getNext();
-                if (!string.IsNullOrEmpty(nextUrl))
-                {
-                    url = nextUrl;
-                    isLast = false;
+                    commits.AddRange(result);
+                    PageLinks pageLinks = new PageLinks(response);
+                    var nextUrl = pageLinks.getNext();
+                    if (!string.IsNullOrEmpty(nextUrl))
+                    {
+                        url = nextUrl;
+                        isLast = false;
+                    }
+                    else
+                    {
+                        isLast = true;
+                    }
                 }
-                else
+                catch (Exception e)
                 {
+                    Console.WriteLine($"Exception {e} on parse {url}");
                     isLast = true;
                 }
-             
+                //await Task.Delay(TimeSpan.FromMinutes(1));
+
             }
 
 

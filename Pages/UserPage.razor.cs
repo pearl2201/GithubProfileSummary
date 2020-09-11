@@ -35,7 +35,7 @@ namespace GithubPfSm.Pages
             Title = new AntDesign.Charts.Title()
             {
                 Visible = true,
-                Text = "Commits Per Quater",
+                Text = "Commits Per Quarter",
             },
 
             Padding = "auto",
