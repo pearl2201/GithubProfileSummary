@@ -1,6 +1,6 @@
 name: DeployToGitHubPages
 env:
-  PUBLISH_DIR: bin/Release/netstandard2.1/publish/wwwwroot
+  PUBLISH_DIR: /home/runner/work/GithubProfileSummary/GithubProfileSummary/bin/Release/netstandard2.1/wwwroot
 
 # Controls when the action will run
 on:
@@ -13,8 +13,15 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
+    # Install .NET Core SDK
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.x
+
     - name: Publish app
-      run: dotnet publish GithubPfSm.csproj -c Release
+      run: dotnet publish GithubPfSm.csproj -c Release && ls -R ${{ env.PUBLISH_DIR }}
+
 
     - name: Rewrite base href
       uses: SteveSandersonMS/ghaction-rewrite-base-href@v1
