@@ -20,7 +20,7 @@ jobs:
         dotnet-version: 3.1.x
 
     - name: Publish app
-      run: echo ${{ env.MY_PAT_TOKEN }} && sed -i 's/your-token/${{ env.MY_PAT_TOKEN }}/g' ./Services/GithubService.cs && dotnet publish GithubPfSm.csproj -c Release && ls -R ${{ env.PUBLISH_DIR }}
+      run: sed -i 's/your-token/${{ env.MY_PAT_TOKEN }}/g' ./Services/GithubService.cs && dotnet publish GithubPfSm.csproj -c Release && ls -R ${{ env.PUBLISH_DIR }}
       env:
         MY_PAT_TOKEN: ${{ secrets.MY_PAT_TOKEN }}
 
