@@ -21,13 +21,12 @@ namespace GithubPfSm.Services
         public GithubService(HttpClient httpClient)
         {
             this.httpClient = httpClient;
-           
-            var token = "your-token"; 
-            //var token = "add your token here";
-            
-                httpClient.DefaultRequestHeaders.Add("Authorization", $"token {token}");
-            
-            
+
+            var token = "your-token";
+
+            httpClient.DefaultRequestHeaders.Add("Authorization", $"token {token}");
+
+
         }
         public async Task<SearchUserResponse> SearchUserAsync(string key)
         {
@@ -60,7 +59,7 @@ namespace GithubPfSm.Services
             while (!isLast)
             {
 
-                Console.WriteLine($"Url: {url}");
+                
                 var request = new HttpRequestMessage()
                 {
                     Method = new HttpMethod("Get"),
@@ -100,7 +99,7 @@ namespace GithubPfSm.Services
             var url = $"https://api.github.com/repos/{username}/{repo}/commits?page={currentPage}";
             while (!isLast)
             {
-                Console.WriteLine($"Url: {url}");
+                
                 var request = new HttpRequestMessage()
                 {
                     Method = new HttpMethod("Get"),
