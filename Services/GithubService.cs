@@ -23,6 +23,7 @@ namespace GithubPfSm.Services
             this.httpClient = httpClient;
            
             var token = "your-token"; 
+            Console.WriteLine(token);
             //var token = "add your token here";
             
                 httpClient.DefaultRequestHeaders.Add("Authorization", $"token {token}");
