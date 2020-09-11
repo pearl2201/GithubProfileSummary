@@ -73,9 +73,7 @@ namespace GithubPfSm.Pages
 
         public void GotoUser(string username)
         {
-            Console.WriteLine(NavigationManager.BaseUri);
-            Console.WriteLine(NavigationManager.ToBaseRelativePath($"/users/{username}"));
-            NavigationManager.NavigateTo(NavigationManager.ToBaseRelativePath($"/users/{username}"));
+            NavigationManager.NavigateTo($"{NavigationManager.BaseUri}users/{username}");
         }
     }
 }
