@@ -21,13 +21,12 @@ namespace GithubPfSm.Services
         public GithubService(HttpClient httpClient)
         {
             this.httpClient = httpClient;
-/*             var fakeToken = "1efa9xxxfd2fee5fxxx1axxxfc6xxx3eaxxx4aa";
-            var token = token.Replace("xxx", ""); */
-            var token = "add your token here";
-            if (string.Equals("token","add your token here"))
-            {
+           
+            var token = "your-token"; 
+            //var token = "add your token here";
+            
                 httpClient.DefaultRequestHeaders.Add("Authorization", $"token {token}");
-            }
+            
             
         }
         public async Task<SearchUserResponse> SearchUserAsync(string key)
