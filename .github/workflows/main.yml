@@ -1,6 +1,6 @@
 name: DeployToGitHubPages
 env:
-  PUBLISH_DIR: GithubPfSm/bin/Debug/netstandard2.1/publish/wwwroot
+  PUBLISH_DIR: /home/runner/work/GithubProfileSummary/GithubProfileSummary/GithubPfSm/bin/Release/netstandard2.1/publish/wwwwroot
 
 # Controls when the action will run
 on:
