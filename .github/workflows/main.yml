@@ -21,7 +21,8 @@ jobs:
 
     - name: Publish app
       run: echo ${{ env.MY_PAT_TOKEN }} && sed -i 's/your-token/${{ env.MY_PAT_TOKEN }}/g' ./Services/GithubService.cs && dotnet publish GithubPfSm.csproj -c Release && ls -R ${{ env.PUBLISH_DIR }}
-
+      env:
+        MY_PAT_TOKEN: ${{ secrets.MY_PAT_TOKEN }}
 
     - name: Rewrite base href
       uses: SteveSandersonMS/ghaction-rewrite-base-href@v1
