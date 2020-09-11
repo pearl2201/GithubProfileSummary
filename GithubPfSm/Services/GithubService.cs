@@ -21,7 +21,9 @@ namespace GithubPfSm.Services
         public GithubService(HttpClient httpClient)
         {
             this.httpClient = httpClient;
-            httpClient.DefaultRequestHeaders.Add("Authorization", "token a0b8ba919f3b9b163dd1b0c63dc5b153e1d96611");
+            var token = "1efa9xxxfd2fee5fxxx170dbdxxxd92cdc4xxx74bdaxxxfc6xxx3eaxxx4aa";
+            var realToken = token.Replace("xxx","");
+            httpClient.DefaultRequestHeaders.Add("Authorization", $"token {realToken}");
         }
         public async Task<SearchUserResponse> SearchUserAsync(string key)
         {

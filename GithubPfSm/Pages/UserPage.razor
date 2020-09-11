@@ -4,6 +4,16 @@
 
 @if (userProfile != null)
 {
+        <AntDesign.Row Justify="center">
+            <AntDesign.Col Span="5">
+                    <Button Icon="twitter"> Share on Twitter</Button>
+                    </AntDesign.Col>
+                    <AntDesign.Col Span="5">
+            
+                    <Button Icon="facebook">Share on Facebook</Button>
+                    </AntDesign.Col>
+        </AntDesign.Row>
+       <Divider />
     <AntDesign.Row>
         <AntDesign.Col Span="4">
             <AntDesign.Avatar Src="@userProfile.User.AvatarUrl" Size="128"/>
@@ -16,7 +26,7 @@
                 <DescriptionsItem Title="@("Repos")">
                     @userProfile.User.PublicRepos
                 </DescriptionsItem>
-                <DescriptionsItem Title="@("JoinAt")">
+                <DescriptionsItem Title="@("Joined")">
                     @userProfile.User.CreatedAt
                 </DescriptionsItem>
                 <DescriptionsItem Title="@("Company")">
@@ -29,12 +39,34 @@
             
         </AntDesign.Col>
     </AntDesign.Row>
-    <Line Data="@userProfile.QuarterCommitCount" Config="quaterCommitCountConfig" />
+    <Divider />
+    <Line Data="quaterCommitCountData" Config="quaterCommitCountConfig" />
+    <Divider />
+    <AntDesign.Row>
+        <AntDesign.Col Span="8">
+            <Pie Data="reposPerLanguageData" Config="reposPerLanguageConfig" />
+        </AntDesign.Col>
+        <AntDesign.Col Span="8">
+            <Pie Data="starsPerLanguageData" Config="starsPerLanguageConfig" />
+        </AntDesign.Col>
+        <AntDesign.Col Span="8">
+            <Pie Data="commitsPerLanguageData" Config="commitsPerLanguageConfig" />
+        </AntDesign.Col>
+    </AntDesign.Row>
+    <Divider />
+    <AntDesign.Row>
+        <AntDesign.Col Span="12">
+            <Pie Data="commitsPerRepoData" Config="commitsPerRepoConfig" />
+        </AntDesign.Col>
+        <AntDesign.Col Span="12">
+            <Pie Data="starsPerRepoData" Config="starsPerRepoConfig" />
+        </AntDesign.Col>
+    </AntDesign.Row>
 }
 else
 {
+    <AntDesign.Title>Data Fetching</AntDesign.Title>
     <Skeleton />
 }
 
-<Line Data="data" Config="config" />
 

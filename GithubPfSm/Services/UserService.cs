@@ -16,10 +16,11 @@ namespace GithubPfSm.Services
 
         [Inject]
         private GithubService githubService { get; set; }
-
-        public UserService(GithubService githubService)
+        private Blazored.LocalStorage.ILocalStorageService localStorage;
+        public UserService(GithubService githubService, Blazored.LocalStorage.ILocalStorageService localStorage)
         {
             this.githubService = githubService;
+            this.localStorage = localStorage;
         }
 
         public bool UserExists(string name)
@@ -32,15 +33,23 @@ namespace GithubPfSm.Services
             return false;
         }
 
+
         public async Task<UserProfile> GetUserProfile(string username)
         {
 
-            UserProfile profile = new UserProfile();
-            Console.WriteLine("Is GithubService Null: " + (githubService == null));
+            UserProfile profile = await localStorage.GetItemAsync<UserProfile>($"profile-{username}");
+           
+            if (profile != null && DateTime.UtcNow.Subtract(profile.FetchedAt).TotalMinutes < 60)
+            {
+                return profile;
+            }
+
+            
             var user = await githubService.GetUserAsync(username);
 
-            var repos = (await githubService.GetUserRepos(username)).Where(x => !x.Fork && x.Size != 0);
-            Console.WriteLine("repos Count: " + repos.Count());
+            var repos = (await githubService.GetUserRepos(username)).Where(x => !x.Fork && x.Size != 0).OrderBy(x => x.CreatedAt).ToList();
+           
+
             //  val repoCommits = repos.parallelStream().map { it to commitsForRepo(it).filter { it.author?.login.equals(username, ignoreCase = true) } }.toList().toMap()
             var repoCommits = await Task.WhenAll(repos.Select(async x =>
             {
@@ -65,32 +74,23 @@ namespace GithubPfSm.Services
 
 
             // val quarterCommitCount = CommitCountUtil.getCommitsForQuarters(user, repoCommits)
-            var tempCommits = new List<Commit>();
-            foreach (var pair in repoCommits)
-            {
-
-                foreach (var commit in pair.Value)
-                {
-                    tempCommits.Add(commit);
-                }
-                Console.WriteLine("Pair count: " + pair.Value.Count() + " -- " + tempCommits.Count);
-            }
+            var tempCommits = repoCommits.SelectMany(x => x.Value).ToList();
             var tempQuarterCommitCount = tempCommits.GroupBy(x => QuarterYear.GetQuarter(x.Content.Committer.Date.UtcDateTime).ToString()).ToDictionary(x => x.Key, x => x.Count());
-            var quarterCommitCount = quarterYears.ToDictionary(x => x, x => tempQuarterCommitCount.ContainsKey(x)? tempQuarterCommitCount[x]:0);
+            var quarterCommitCount = quarterYears.ToDictionary(x => x, x => tempQuarterCommitCount.ContainsKey(x) ? tempQuarterCommitCount[x] : 0);
             // val langRepoCount = langRepoGrouping.eachCount().toList().sortedBy { (_, v) -> -v }.toMap()
-            var langRepoCount = langRepoGrouping.ToDictionary(x => x.Key, x => x.Count()).OrderBy(x => x.Value).ToDictionary(x => x.Key, x => x.Value);
+            var langRepoCount = langRepoGrouping.ToDictionary(x => x.Key, x => x.Count()).OrderByDescending(x => x.Value).ToDictionary(x => x.Key, x => x.Value);
 
             // val langStarCount = langRepoGrouping.fold(0) { acc, repo -> acc + repo.watchers }.toList().sortedBy { (_, v) -> -v }.toMap()
-            var langStarCount = langRepoGrouping.ToDictionary(x => x.Key, x => x.Select(x => x.StargazersCount).Sum()).OrderBy(x => x.Value).ToDictionary(x => x.Key, x => x.Value);
+            var langStarCount = langRepoGrouping.ToDictionary(x => x.Key, x => x.Select(x => x.StargazersCount).Sum()).OrderByDescending(x => x.Value).ToDictionary(x => x.Key, x => x.Value);
 
             // val langCommitCount = langRepoGrouping.fold(0) { acc, repo -> acc + repoCommits[repo]!!.size }.toList().sortedBy { (_, v) -> -v }.toMap()
-            var langCommitCount = langRepoGrouping.ToDictionary(x => x.Key, x => (int)x.Select(x => x.Size).Sum()).OrderBy(x => x.Value).ToDictionary(x => x.Key, x => x.Value);
+            var langCommitCount = langRepoGrouping.ToDictionary(x => x.Key, x => (int)x.Select(x => x.Size).Sum()).OrderByDescending(x => x.Value).ToDictionary(x => x.Key, x => x.Value);
 
             // val repoCommitCount = repoCommits.map { it.key.name to it.value.size }.toList().sortedBy { (_, v) -> -v }.take(10).toMap()
-            var repoCommitCount = repoCommits.Select(x => new KeyValuePair<string, int>(x.Key.Name, x.Value.Count())).OrderBy(x => x.Value).Take(10).ToDictionary(x => x.Key, x => x.Value);
+            var repoCommitCount = repoCommits.Select(x => new KeyValuePair<string, int>(x.Key.Name, x.Value.Count())).OrderByDescending(x => x.Value).Take(10).ToDictionary(x => x.Key, x => x.Value);
 
             // val repoStarCount = repos.filter { it.watchers > 0 }.map { it.name to it.watchers }.sortedBy { (_, v) -> -v }.take(10).toMap()
-            var repoStarCount = repos.Where(x => x.WatchersCount > 0).OrderBy(x => x.WatchersCount).Take(10).ToDictionary(x => x.Name, x => x.WatchersCount);
+            var repoStarCount = repos.Where(x => x.WatchersCount > 0).OrderByDescending(x => x.WatchersCount).Take(10).ToDictionary(x => x.Name, x => x.WatchersCount);
 
             // val repoCommitCountDescriptions = repoCommitCount.map { it.key to repos.find { r -> r.name == it.key }?.description }.toMap()
             var repoCommitCountDescriptions = repoCommitCount.ToDictionary(x => x.Key, x => repos.FirstOrDefault(y => y.Name == x.Key)?.Description);
@@ -98,7 +98,7 @@ namespace GithubPfSm.Services
             // val repoStarCountDescriptions = repoStarCount.map { it.key to repos.find { r -> r.name == it.key }?.description }.toMap()
             var repoStarCountDescriptions = repoStarCount.ToDictionary(x => x.Key, x => repos.FirstOrDefault(y => y.Name == x.Key)?.Description);
 
-            return new UserProfile()
+            profile = new UserProfile()
             {
                 User = user,
                 LangCommitCount = langCommitCount,
@@ -111,6 +111,8 @@ namespace GithubPfSm.Services
                 RepoStarCountDescriptions = repoStarCountDescriptions,
                 FetchedAt = DateTime.UtcNow
             };
+            await localStorage.SetItemAsync($"profile-{username}", profile);
+            return profile;
         }
 
 

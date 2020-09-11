@@ -41,7 +41,7 @@ namespace GithubPfSm.Pages
         private Task<SearchUserResponse> _oldTask;
         private List<IndexSearchUser> _items = new List<IndexSearchUser>();
 
-        private async void OnSearch(string value)
+        private async Task OnSearch(string value)
         {
             if (!string.IsNullOrWhiteSpace(value))
             {

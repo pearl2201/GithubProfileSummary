@@ -1,6 +1,8 @@
 
 using System.Net.Http;
 using System.Linq;
+using System.Collections.Generic;
+using System.Collections;
 /**
 * Page link class to be used to determine the links to other pages of request
 * responses encoded in the current response. These will be present if the
@@ -25,7 +27,17 @@ public class PageLinks
 	 */
     public PageLinks(HttpResponseMessage response)
     {
-        string linkHeader = response.Headers.Try("Link").FirstOrDefault();
+        string linkHeader = "";
+        IEnumerable<string> linkHeaderValues = null;
+        if (response.Headers.TryGetValues("Link", out linkHeaderValues))
+        {
+            linkHeader = linkHeaderValues.FirstOrDefault();
+        }
+        else if (response.Headers.TryGetValues("link", out linkHeaderValues))
+        {
+            linkHeader = linkHeaderValues.FirstOrDefault();
+        }
+
         if (!string.IsNullOrEmpty(linkHeader))
         {
             string[] links = linkHeader.Split(DELIM_LINKS);
@@ -38,7 +50,7 @@ public class PageLinks
                 string linkPart = segments[0].Trim();
                 if (!linkPart.StartsWith("<") || !linkPart.EndsWith(">")) //$NON-NLS-1$ //$NON-NLS-2$
                     continue;
-                linkPart = linkPart.Substring(1, linkPart.Length - 1);
+                linkPart = linkPart.Substring(1, linkPart.Length - 2);
 
                 for (int i = 1; i < segments.Length; i++)
                 {
@@ -48,7 +60,7 @@ public class PageLinks
 
                     string relValue = rel[1];
                     if (relValue.StartsWith("\"") && relValue.EndsWith("\"")) //$NON-NLS-1$ //$NON-NLS-2$
-                        relValue = relValue.Substring(1, relValue.Length - 1);
+                        relValue = relValue.Substring(1, relValue.Length - 2);
 
                     if (string.Equals("first", relValue, System.StringComparison.CurrentCultureIgnoreCase))
                         first = linkPart;
@@ -63,8 +75,14 @@ public class PageLinks
         }
         else
         {
-            next = response.Headers.GetValues("next").FirstOrDefault();
-            last = response.Headers.GetValues("last").FirstOrDefault();
+            if (response.Headers.TryGetValues("next", out linkHeaderValues))
+            {
+                next = linkHeaderValues.FirstOrDefault();
+            }
+            if (response.Headers.TryGetValues("last", out linkHeaderValues))
+            {
+                last = linkHeaderValues.FirstOrDefault();
+            }
         }
     }
 

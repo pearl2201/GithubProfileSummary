@@ -1,34 +1,72 @@
 ﻿@page "/"
 
-
+@inject MessageService message;
 
 
 
 <AntDesign.Title Level="1">
     Enter Github Username
 </AntDesign.Title>
-<Select ShowSearch
-        Style="width:200px"
-        Placeholder="input search text"
-        ShowArrow="false"
-        FilterOption="false"
-        DefaultActiveFirstOption="false"
-        OnSearch="@OnSearch"
-        OnChange="@OnChange">
-    @foreach (var value in _items)
+<Search Placeholder="input search text" Size="@InputSize.Large" EnterButton="@("Search")" @bind-Value="@txtValue" OnPressEnter="OnSearch" OnSearch="OnSearch"/>
+<div>
+    <AntList Grid="gutter"  DataSource="@_items" >
+        <Item Context="item">
+            <AntDesign.Card Bordered="true">
+                <div class="search-result">
+                    <AntDesign.Avatar Src="@item.AvatarUrl" Size="small" class="search-result-avatar" />
+              
+                    @item.Login
+                
+                     <Button Type="Primary" Icon="arrow-right" class="search-result-link"></Button>
+              
+                </div>
+         
+            </AntDesign.Card>
+        </Item>
+    </AntList>
+        
+    
+   
+</div>
+
+<style>
+.search-result{
+    display: flex;
+    justify-content: start;
+    align-items: center;
+}
+
+.search-result-avatar{
+    margin-right:10px !important;
+}
+
+.search-result-link{
+    margin-left: auto;
+}
+</style>
+
+
+@code{
+    public ListGridType gutter = new ListGridType { Gutter = 15, Column = 3 };
+
+    private string txtValue { get; set; }
+
+    private void Handle(string value)
     {
-        <SelectOption Value="@value.Login">
-            <AntDesign.Space>
-                <AntDesign.SpaceItem>
-                    <AntDesign.Avatar Src="@value.AvatarUrl" Size="small"/>
-                </AntDesign.SpaceItem>
-                <AntDesign.SpaceItem>
-                    @value.Login
-                </AntDesign.SpaceItem>
-            </AntDesign.Space>
-        </SelectOption>
+        Console.WriteLine(value);
     }
-</Select>
+
+    public async Task OnSearch()
+    {
+        await OnSearch(txtValue);
+    }
+}
+
+
+        
+
+    
+
 
 
 
