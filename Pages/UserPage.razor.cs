@@ -177,9 +177,9 @@ namespace GithubPfSm.Pages
             quaterCommitCountData = userProfile.QuarterCommitCount.Select(x => new { quarter = x.Key, commits = x.Value }).ToArray();
             reposPerLanguageData = userProfile.LangRepoCount.Select(x => new { lang = x.Key, repos = x.Value }).ToArray();
             starsPerLanguageData = userProfile.LangStarCount.Select(x => new { lang = x.Key, stars = x.Value }).ToArray();
-            commitsPerLanguageData = userProfile.LangStarCount.Select(x => new { lang = x.Key, commits = x.Value }).ToArray();
-            commitsPerRepoData = userProfile.LangStarCount.Select(x => new { repo = x.Key, commits = x.Value }).ToArray();
-            starsPerRepoData = userProfile.LangStarCount.Select(x => new { repo = x.Key, stars = x.Value }).ToArray();
+            commitsPerLanguageData = userProfile.LangCommitCount.Select(x => new { lang = x.Key, commits = x.Value }).ToArray();
+            commitsPerRepoData = userProfile.RepoCommitCount.Select(x => new { repo = x.Key, commits = x.Value }).ToArray();
+            starsPerRepoData = userProfile.RepoStarCount.Select(x => new { repo = x.Key, stars = x.Value }).ToArray();
         }
     }
 }
