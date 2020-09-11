@@ -123,7 +123,7 @@ namespace GithubPfSm.Services
                 {
                     isLast = true;
                 }
-                await Task.Delay(TimeSpan.FromSeconds(1));
+             
             }
 
 
