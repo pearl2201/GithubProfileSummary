@@ -7,7 +7,7 @@
 <AntDesign.Title Level="1">
     Enter Github Username
 </AntDesign.Title>
-<Search Placeholder="input search text" Size="@InputSize.Large" EnterButton="@("Search")" @bind-Value="@txtValue" OnPressEnter="OnSearch" OnSearch="OnSearch"/>
+<Search Placeholder="ex. 'pearl2201'" Size="@InputSize.Large" EnterButton="@("Search")" @bind-Value="@txtValue" OnPressEnter="OnSearch" OnSearch="OnSearch"/>
 <div>
     <AntList Grid="gutter"  DataSource="@_items" >
         <Item Context="item">
@@ -16,9 +16,9 @@
                     <AntDesign.Avatar Src="@item.AvatarUrl" Size="small" class="search-result-avatar" />
               
                     @item.Login
-                
-                     <Button Type="Primary" Icon="arrow-right" class="search-result-link"><a href="@($"/users/{item.Login}")"></a></Button>
-              
+                    <div class="search-result-link">
+                        <Button Type="Primary" Icon="arrow-right" @onclick="(e) => GotoUser(item.Login)"></Button>
+                    </div>
                 </div>
          
             </AntDesign.Card>
@@ -59,6 +59,11 @@
     public async Task OnSearch()
     {
         await OnSearch(txtValue);
+    }
+
+    public void GotoUser(string username)
+    {
+        NavigationManager.NavigateTo($"/users/{username}");
     }
 }
 
