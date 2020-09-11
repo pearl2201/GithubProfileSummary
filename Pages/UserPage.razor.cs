@@ -30,37 +30,6 @@ namespace GithubPfSm.Pages
         [Parameter]
         public string Username { get; set; }
 
-        object[] data = new object[] {
-        new { year = "1991", value = 3 },
-        new { year = "1992", value = 4 },
-        new { year = "1993", value = 3.5 },
-        new { year = "1994", value = 5 },
-        new { year = "1995", value = 4.9 },
-        new { year = "1996", value = 6 },
-        new { year = "1997", value = 7 },
-        new { year = "1998", value = 9 },
-        new { year = "1999", value = 13 },
-        };
-
-        LineConfig config = new LineConfig()
-        {
-            Title = new AntDesign.Charts.Title()
-            {
-                Visible = true,
-                Text = "曲线折线图",
-            },
-            Description = new AntDesign.Charts.Description()
-            {
-                Visible = true,
-                Text = "用平滑的曲线代替折线。",
-            },
-            Padding = "auto",
-            ForceFit = true,
-            XField = "year",
-            YField = "value",
-            Smooth = true,
-        };
-
         LineConfig quaterCommitCountConfig = new LineConfig()
         {
             Title = new AntDesign.Charts.Title()
@@ -129,7 +98,7 @@ namespace GithubPfSm.Pages
             Title = new AntDesign.Charts.Title()
             {
                 Visible = true,
-                Text = "Stars Per Language",
+                Text = "Commits Per Language",
             },
 
             Padding = "auto",
@@ -151,7 +120,7 @@ namespace GithubPfSm.Pages
             Title = new AntDesign.Charts.Title()
             {
                 Visible = true,
-                Text = "Stars Per Language",
+                Text = "Commits Per Repo",
             },
 
             Padding = "auto",
@@ -172,7 +141,7 @@ namespace GithubPfSm.Pages
             Title = new AntDesign.Charts.Title()
             {
                 Visible = true,
-                Text = "Stars Per Language",
+                Text = "Stars Per Repo",
             },
 
             Padding = "auto",
@@ -188,51 +157,17 @@ namespace GithubPfSm.Pages
         };
 
         private object[] quaterCommitCountData;
-
-        public class QuaterCommitCount
-        {
-            public string Quarter { get; set; }
-
-            public int Commits { get; set; }
-        }
+       
         private object[] reposPerLanguageData;
 
-        public class ReposPerLanguage
-        {
-            public string Lang { get; set; }
-            public int Repos { get; set; }
-        }
         private object[] starsPerLanguageData;
-
-        public class StarsPerLanguage
-        {
-            public string Lang { get; set; }
-            public int Stars { get; set; }
-        }
 
         private object[] commitsPerLanguageData;
 
-        public class CommitsPerLanguage
-        {
-            public string Lang { get; set; }
-            public int Commits { get; set; }
-        }
-
         private object[] commitsPerRepoData;
 
-        public class CommitsPerRepo
-        {
-            public string Repo { get; set; }
-            public int Commits { get; set; }
-        }
-
+ 
         private object[] starsPerRepoData;
-
-        public class StarsPerRepo
-        {
-            public string Repo { get; set; }
-            public int Stars { get; set; }
-        }
 
 
         private GithubPfSm.Entities.UserProfile userProfile;
