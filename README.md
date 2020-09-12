@@ -1,7 +1,7 @@
 # Github Profile Summary
 ## Live at: https://pearl2201.github.io/GithubProfileSummary/
 ## Preview
-![image](./Previews/download.png)
+![image](./Previews/download-1.png)
 ## Add tokens:
 - If no api-token is set, you only get ~50 requests/hour, and if some repos have a large commits, it could lead to take too long time to fetch data. (In some case, it got limited by Github).
 - Generate token from: https://github.com/settings/tokens
