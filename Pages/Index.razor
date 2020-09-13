@@ -7,7 +7,7 @@
 <AntDesign.Title Level="1">
     Enter Github Username
 </AntDesign.Title>
-<Search Placeholder="ex. 'pearl2201'" Size="@InputSize.Large" EnterButton="@("Search")" @bind-Value="@txtValue" OnPressEnter="OnSearch" OnSearch="OnSearch"/>
+<Search Placeholder="ex. 'pearl2201'" Size="@InputSize.Large" EnterButton="@("Search")" @bind-Value="@txtValue" OnPressEnter="OnSearchUser" OnSearch="OnSearchUser"/>
 <div>
     <AntList Grid="gutter"  DataSource="@_items" >
         <Item Context="item">
@@ -56,7 +56,7 @@
         Console.WriteLine(value);
     }
 
-    public async Task OnSearch()
+    public async Task OnSearchUser()
     {
         await OnSearch(txtValue);
     }
